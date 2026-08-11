@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tohonesty.com/sitemap.xml

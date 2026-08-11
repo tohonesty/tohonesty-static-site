@@ -1,0 +1,62 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tohonesty-static",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-10",
+
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page"
+  },
+
+  "send_email": [
+    {
+      "name": "CONTACT_EMAIL",
+      "destination_address": "tohonesty@tohonesty.com",
+      "allowed_sender_addresses": [
+        "tohonesty@tohonesty.com"
+      ]
+    }
+  ],
+
+  "env": {
+    "staging": {
+      "name": "tohonesty-static-staging",
+      "workers_dev": true,
+      "send_email": [
+        {
+          "name": "CONTACT_EMAIL",
+          "destination_address": "tohonesty@tohonesty.com",
+          "allowed_sender_addresses": [
+            "tohonesty@tohonesty.com"
+          ]
+        }
+      ]
+    },
+
+    "production": {
+      "name": "tohonesty-static-production",
+      "workers_dev": false,
+      "send_email": [
+        {
+          "name": "CONTACT_EMAIL",
+          "destination_address": "tohonesty@tohonesty.com",
+          "allowed_sender_addresses": [
+            "tohonesty@tohonesty.com"
+          ]
+        }
+      ],
+      "routes": [
+        {
+          "pattern": "tohonesty.com/*",
+          "zone_name": "tohonesty.com"
+        },
+        {
+          "pattern": "www.tohonesty.com/*",
+          "zone_name": "tohonesty.com"
+        }
+      ]
+    }
+  }
+}
