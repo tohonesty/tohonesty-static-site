@@ -104,7 +104,7 @@
       });
       if (!response.ok) throw new Error("The encrypted submission was not accepted.");
       form.reset();
-      setStatus("Your encrypted contact details have been sent successfully.", "success");
+      setStatus("Your encrypted enquiry has been received successfully. We will review the information provided and, if it meets our initial criteria, contact you at the email address supplied to explain the next step, normally within two business days. Please check your inbox and spam folder. We will never ask for private keys, seed phrases, passwords, PINs or recovery codes.", "success");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Secure submission failed. Please try again.", "error");
     } finally {
