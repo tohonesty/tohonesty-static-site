@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Secure and private client introductions | Tohonesty Insights</title>
+<meta name="description" content="How Tohonesty applies data minimisation, browser-side encryption and layered security to protect the first contact with high-value digital asset owners.">
+<link rel="canonical" href="https://tohonesty.com/insights/">
+<link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<div class="nav-wrap">
+<a class="brand" href="/">
+<span class="brand-mark">TH</span>
+<span>Tohonesty</span>
+</a>
+<nav class="nav-links" aria-label="Primary">
+<a href="/about/">About</a>
+<a href="/faqs/">FAQs</a>
+<a class="button" href="/contact/">Secure contact</a>
+</nav>
+</div>
+</header>
+<main id="main">
+<section class="page-hero">
+<div class="reading">
+<p class="eyebrow">Tohonesty insights</p>
+<h1>Building a secure, private web intake for high-net-worth client introductions</h1>
+<p class="intro">Why discretion should begin before the first conversation.</p>
+</div>
+</section>
+<section class="section">
+<article class="reading prose">
+<p>For a client dealing with displaced digital assets, the first approach to a specialist can be one of the most sensitive moments in the entire process.</p>
+<p>At that stage, the client may not yet know who can assist, which jurisdiction matters, what evidence will be required or whether a viable restitution pathway exists. They may also be acutely aware that people who have suffered a loss are frequently targeted again—this time by impersonators, fraudulent recovery services and opportunistic requests for confidential information.</p>
+<p>That creates an important design question: how can an introduction service establish a safe first point of contact without asking the prospective client to disclose more than is necessary?</p>
+<p>At Tohonesty, our answer is the <strong>Minimal Access Protocol</strong>: a security and privacy model designed around restraint. The objective is not to collect a complete case file through a website. It is to establish whether an appropriate professional introduction may be possible, while minimising the information exposed along the way.</p>
+
+<h2>The safest sensitive data is data that was never requested</h2>
+<p>Many online intake systems begin with a long questionnaire. They ask for transaction histories, wallet addresses, evidence, asset values and detailed descriptions of the loss. That may be convenient for the recipient, but it concentrates valuable information in a public-facing system before trust has been established.</p>
+<p>We deliberately take the opposite approach.</p>
+<p>Our initial enquiry collects only the minimum information needed to begin an assessment: basic contact details and a simple indication of ownership or evidentiary status. We do not ask prospective clients to upload case evidence or describe the technical history of their assets through the website.</p>
+<p>Most importantly, Tohonesty will never request private keys, seed phrases, passwords, PINs or recovery codes. They are not required for an initial assessment, and no legitimate introduction from us will depend on a client surrendering cryptographic credentials.</p>
+<p>This is more than a warning placed beneath a form. It is an architectural boundary. The website is not designed to accept those secrets.</p>
+
+<h2>Privacy before transmission</h2>
+<p>Conventional web forms send readable information to a server, where it is processed before being stored or forwarded. Encryption in transit protects the connection, but the receiving infrastructure still handles the information in readable form.</p>
+<p>Our secure intake follows a different model. The limited information supplied by the client is encrypted inside the client’s own browser before the submission leaves their device. The public-facing service receives an encrypted package rather than readable contact data.</p>
+<p>The corresponding decryption capability is not held by the website. It remains offline and is available only through a restricted review process. Intermediary systems transport ciphertext; they are not entrusted with the means to turn it back into client information.</p>
+<p>This separation materially reduces the number of systems and people capable of accessing an enquiry. It also limits the consequences of compromise at any one intermediate layer.</p>
+
+<h2>No online case database</h2>
+<p>The site does not maintain an online database of prospective-client enquiries. There is no web-accessible case-management portal, no client account system and no administrative login exposed through the public application.</p>
+<p>This is a deliberate reduction of attack surface. A feature that does not exist cannot be misconfigured, brute-forced or exploited.</p>
+<p>The website has also been built without a conventional content-management platform or unnecessary third-party application framework. Its public pages are intentionally simple and largely static. Dynamic processing is confined to the narrow function required to accept a correctly formed encrypted submission.</p>
+<p>That simplicity is a security control in its own right. It makes the system easier to understand, test, maintain and audit.</p>
+
+<h2>Defensive boundaries at every layer</h2>
+<p>Minimalism does not mean relying on a single safeguard. The service uses layered controls so that no individual measure has to carry the entire security burden.</p>
+<p>The browser is instructed to follow a strict content policy that limits where scripts, styles, connections and other resources may originate. Unnecessary browser capabilities—including access to cameras, microphones, location and payment interfaces—are disabled for the site. External tracking and performance scripts are not permitted to override that boundary.</p>
+<p>At the network edge, managed security controls inspect and filter requests before they reach the application. The secure contact endpoint accepts only the narrow request method and data format it was designed to receive. Unexpected requests are rejected, rapid repeated submissions are restricted and the encrypted package is subjected to strict structural and size validation before it can proceed.</p>
+<p>These measures are intentionally concentrated on the only dynamic part of the service. Public information remains accessible to legitimate prospective clients, advisers, journalists and search engines without imposing indiscriminate challenges or geographic barriers.</p>
+
+<h2>Cryptographic separation and key discipline</h2>
+<p>The intake system uses modern hybrid encryption: the efficiency and integrity protection of authenticated symmetric encryption combined with an asymmetric public-key model.</p>
+<p>Only the public encryption key is made available to the browser. The private decryption key is never deployed to the website, the edge service or an online secret store. Public keys are versioned and rotated through a controlled release process, with each change tested before production use.</p>
+<p>This design means that possessing the public website code does not provide the ability to decrypt historical or current enquiries. Encryption and decryption responsibilities remain deliberately separated.</p>
+
+<h2>Security without invisible surveillance</h2>
+<p>Security and privacy are related, but they are not identical. A site can be technically protected while still collecting more behavioural information than its purpose requires.</p>
+<p>Our approach avoids unnecessary browser analytics and third-party tracking. We do not need to build advertising profiles, follow visitors across the web or measure their behaviour in order to provide an introduction service.</p>
+<p>Infrastructure providers inevitably process limited technical information to deliver and protect internet traffic. Our objective is to minimise optional collection, avoid creating a client-tracking dataset and ensure that the content of an enquiry remains encrypted throughout the online delivery path.</p>
+
+<h2>A secure introduction—not online case execution</h2>
+<p>Tohonesty is an independent introduction and referral service. We are not a law firm, recovery contractor, financial adviser or asset custodian. We do not hold, trade, manage or take technical control of client assets.</p>
+<p>Our role is to conduct an initial viability review and, where appropriate and expressly authorised, introduce the prospective client to independent legal and forensic specialists. Those professionals set out their own analysis, engagement terms, strategy and fees directly.</p>
+<p>This separation is reflected in the technology. The website is designed to support a careful first contact—not to conduct legal discovery, receive a complete evidential record or execute a recovery operation online.</p>
+
+<h2>Trust is demonstrated through boundaries</h2>
+<p>Security claims are easy to make. The more meaningful question is what an organisation has deliberately made itself unable—or unwilling—to collect and do.</p>
+<p>Our boundaries are clear:</p>
+<ul>
+<li>We do not request cryptographic credentials.</li>
+<li>We do not ask for detailed case evidence through the public website.</li>
+<li>We do not maintain an online database of prospective-client submissions.</li>
+<li>We do not allow intermediary web systems to read the content of an enquiry.</li>
+<li>We do not use the site to custody assets or provide legal or financial advice.</li>
+<li>We do not weaken client-side protections merely to accommodate unnecessary tracking technology.</li>
+</ul>
+<p>No online system can honestly promise the elimination of every risk. Responsible security is a continuing discipline of minimisation, testing, monitoring, controlled change and independent scrutiny. The aim is to reduce exposure, contain failure and ensure that each part of the service has only the access it genuinely requires.</p>
+<p>For high-net-worth individuals and institutions, discretion should not begin after an engagement letter is signed. It should begin with the first click.</p>
+
+<aside class="notice">
+<h2>Begin with a secure enquiry</h2>
+<p>If you believe you can establish lawful ownership of high-value displaced digital assets, you may ask Tohonesty to consider an appropriate professional introduction.</p>
+<p><a class="button" href="/contact/">Begin a secure enquiry</a></p>
+<p><strong>Security reminder:</strong> Tohonesty will never ask for your private keys, seed phrases, passwords, PINs or recovery codes.</p>
+</aside>
+</article>
+</section>
+</main>
+<footer class="site-footer">
+<div class="container">
+<div class="footer-grid">
+<a class="brand" href="/">
+<span class="brand-mark">TH</span>
+<span>Tohonesty</span>
+</a>
+<nav class="footer-links" aria-label="Legal">
+<a href="/privacy-policy/">Privacy Policy</a>
+<a href="/client-terms/">Client Terms of Business</a>
+<a href="/website-terms/">Website Terms of Use</a>
+<a href="/legal-disclosure/">Legal Disclosure</a>
+</nav>
+</div>
+<p class="fine-print">Copyright 2026 © Tohonesty. All Rights Reserved. Co. No. 15547832. ICO Reg: ZB778271. Registered in England &amp; Wales. | Registered Office: The Old School Rooms, North Stoke, Wallingford, OX10 6BL, UK.</p>
+</div>
+</footer>
+</body>
+</html>
