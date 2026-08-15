@@ -34,14 +34,27 @@ test("legal wording and dates are preserved", () => {
   const client = read("client-terms/index.html");
   const website = read("website-terms/index.html");
   const disclosure = read("legal-disclosure/index.html");
+
   assert.match(privacy, /Last updated: 15 August 2026/);
-  assert.match(privacy, /The Old School Rooms, The Street, North Stoke, Wallingford, United Kingdom, OX10 6BL/);
-  assert.match(client, /Last updated:<\/strong> 01 August 2026/);
-  assert.match(client, /You agree not to send private keys, seed phrases, passwords, PINs or recovery codes/);
+  assert.match(
+    privacy,
+    /The Old School Rooms, The Street, North Stoke, Wallingford, United Kingdom, OX10 6BL/
+  );
+
+  assert.match(client, /Last updated:<\/strong> 15 August 2026/);
+  assert.match(
+    client,
+    /Never send Tohonesty private keys, seed phrases, passwords, PINs, passphrases, recovery codes or direct access to a wallet, account, device or asset\./
+  );
+
   assert.match(website, /Last updated:<\/strong> 01 August 2026/);
   assert.match(website, /Contracts \(Rights of Third Parties\) Act 1999/);
+
   assert.match(disclosure, /Last updated: 26 July 2026/);
-  assert.match(disclosure, /We are not a law firm, certified financial advisory firm, asset recovery contractor, or asset custodian\./);
+  assert.match(
+    disclosure,
+    /We are not a law firm, certified financial advisory firm, asset recovery contractor, or asset custodian\./
+  );
 });
 
 test("FAQ is readable HTML with anchor links and no accordions", () => {
