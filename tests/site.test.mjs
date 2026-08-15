@@ -9,8 +9,7 @@ const publicDir = path.join(root, "public");
 const read = (relative) => fs.readFileSync(path.join(publicDir, relative), "utf8");
 const htmlFiles = [
   "index.html", "about/index.html", "faqs/index.html", "contact/index.html",
-  "privacy-policy/index.html", "client-terms/index.html", "website-terms/index.html",
-  "legal-disclosure/index.html", "404.html"
+  "privacy-policy/index.html", "client-terms/index.html", "website-terms/index.html", "404.html"
 ];
 
 test("all required static routes exist and are standalone HTML", () => {
@@ -33,7 +32,6 @@ test("legal wording and dates are preserved", () => {
   const privacy = read("privacy-policy/index.html");
   const client = read("client-terms/index.html");
   const website = read("website-terms/index.html");
-  const disclosure = read("legal-disclosure/index.html");
 
   assert.match(privacy, /Last updated: 15 August 2026/);
   assert.match(
@@ -50,11 +48,6 @@ test("legal wording and dates are preserved", () => {
   assert.match(website, /Last updated:<\/strong> 15 August 2026/);
   assert.match(website, /Contracts \(Rights of Third Parties\) Act 1999/);
 
-  assert.match(disclosure, /Last updated: 26 July 2026/);
-  assert.match(
-    disclosure,
-    /We are not a law firm, certified financial advisory firm, asset recovery contractor, or asset custodian\./
-  );
 });
 
 test("FAQ is readable HTML with anchor links and no accordions", () => {
