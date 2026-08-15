@@ -34,8 +34,8 @@ test("legal wording and dates are preserved", () => {
   const client = read("client-terms/index.html");
   const website = read("website-terms/index.html");
   const disclosure = read("legal-disclosure/index.html");
-  assert.match(privacy, /Last updated: 05 August 2026/);
-  assert.match(privacy, /The Old School Rooms, The Street, North Stoke, Oxfordshire OX10 6BL/);
+  assert.match(privacy, /Last updated: 15 August 2026/);
+  assert.match(privacy, /The Old School Rooms, The Street, North Stoke, Wallingford, United Kingdom, OX10 6BL/);
   assert.match(client, /Last updated:<\/strong> 01 August 2026/);
   assert.match(client, /You agree not to send private keys, seed phrases, passwords, PINs or recovery codes/);
   assert.match(website, /Last updated:<\/strong> 01 August 2026/);
