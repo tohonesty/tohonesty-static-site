@@ -47,7 +47,7 @@ test("legal wording and dates are preserved", () => {
     /Never send Tohonesty private keys, seed phrases, passwords, PINs, passphrases, recovery codes or direct access to a wallet, account, device or asset\./
   );
 
-  assert.match(website, /Last updated:<\/strong> 01 August 2026/);
+  assert.match(website, /Last updated:<\/strong> 15 August 2026/);
   assert.match(website, /Contracts \(Rights of Third Parties\) Act 1999/);
 
   assert.match(disclosure, /Last updated: 26 July 2026/);
