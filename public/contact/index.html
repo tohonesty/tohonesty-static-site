@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Secure contact | Tohonesty</title>
-<meta name="description" content="Send minimal contact information encrypted in your browser before transmission.">
+<meta name="description" content="Send limited contact information encrypted in your browser before transmission.">
 <link rel="stylesheet" href="/assets/css/site.css">
 <link rel="icon" type="image/png" href="/favicon.png">
 </head>
@@ -19,41 +19,46 @@
 <nav class="nav-links" aria-label="Primary">
 <a href="/about/">About</a>
 <a href="/faqs/">FAQs</a>
-<a class="button" href="/contact/">Secure contact</a>
+<a class="button" href="/contact/" aria-current="page">Secure contact</a>
 </nav>
 </div>
 </header>
+
 <main id="main">
 <section class="page-hero">
 <div class="container">
 <p class="eyebrow">Minimal Access Protocol</p>
 <h1>Secure contact</h1>
-<p class="intro">Only the minimum information needed to assess whether an introduction may be appropriate.</p>
+<p class="intro">Only the minimum information needed to consider whether an introduction may be appropriate.</p>
 </div>
 </section>
+
 <section class="section">
 <div class="container contact-grid">
 <aside class="prose">
 <h2>Before you begin</h2>
-<p>Your information is encrypted in this browser before any submission is sent. The server and email system receive ciphertext only.</p>
+<p>The form contents are encrypted in this browser before the network submission occurs. The public endpoint and email body receive an encrypted envelope rather than the plaintext form contents.</p>
 <ul class="security-list">
 <li>Do not provide private keys or seed phrases.</li>
-<li>Do not provide passwords, PINs or recovery codes.</li>
-<li>Do not include wallet addresses, transaction details or asset values at this stage.</li>
+<li>Do not provide passwords, PINs, passphrases or recovery codes.</li>
+<li>Do not provide allegations, case evidence, wallet addresses, transaction details or asset values at this stage.</li>
 </ul>
-<p>There is no free-text field by design.</p>
+<p>There is no free-text field by design. Submitting this form requests only a preliminary review by Tohonesty. It does not engage a specialist or authorise an introduction.</p>
 </aside>
+
 <section class="secure-panel" aria-labelledby="form-title">
 <h2 id="form-title">Your contact details</h2>
 <form id="secure-contact">
 <div class="field">
-<label for="full-name">Full Name</label>
+<label for="full-name">Full name</label>
 <input id="full-name" name="fullName" type="text" autocomplete="name" maxlength="120" required>
 </div>
+
 <div class="field">
-<label for="email-address">Email Address</label>
+<label for="email-address">Email address</label>
 <input id="email-address" name="emailAddress" type="email" autocomplete="email" maxlength="254" required>
 </div>
+
 <div class="field">
 <label for="ownership-status">Ownership / evidentiary status</label>
 <select id="ownership-status" name="ownershipStatus" required>
@@ -63,18 +68,20 @@
 <option value="uncertain">I am uncertain what evidence is available</option>
 </select>
 </div>
+
 <div class="field check-row">
 <input id="consent" name="consent" type="checkbox" required>
-<label for="consent">I actively consent to this transmission in accordance with the UK GDPR mandate (and equivalent data-protection laws where applicable). I understand that my contact details will be handled via Tohonesty's secure Minimal Access protocol. Full details are in our <a href="/privacy-policy/">Privacy Policy</a>.</label>
+<label for="consent">I have read the <a href="/privacy-policy/">Privacy Policy</a>, agree to the <a href="/client-terms/">Client Terms of Business</a>, and request Tohonesty to use these details to consider whether an introduction may be appropriate. I understand that this does not authorise disclosure to a specialist; Tohonesty will ask for separate permission before making an introduction.</label>
 </div>
+
 <button id="submit-contact" class="button" type="submit">Encrypt and send</button>
-<p id="contact-status" class="status" role="status" aria-live="polite">
-</p>
+<p id="contact-status" class="status" role="status" aria-live="polite"></p>
 </form>
 </section>
 </div>
 </section>
 </main>
+
 <footer class="site-footer">
 <div class="container">
 <div class="footer-grid">
@@ -89,10 +96,9 @@
 <a href="/legal-disclosure/">Legal Disclosure</a>
 </nav>
 </div>
-<p class="fine-print">Copyright 2026 © Tohonesty. All Rights Reserved. Co. No. 15547832. ICO Reg: ZB778271. Registered in England &amp; Wales. | Registered Office: The Old School Rooms, North Stoke, Wallingford, OX10 6BL, UK.</p>
+<p class="fine-print">Copyright 2026 © Tohonesty. All Rights Reserved. Co. No. 15547832. ICO Reg: ZB778271. Registered in England &amp; Wales. | Registered Office: The Old School Rooms, The Street, North Stoke, Wallingford, United Kingdom, OX10 6BL.</p>
 </div>
 </footer>
-<script src="/assets/js/contact.js" defer>
-</script>
+<script src="/assets/js/contact.js" defer></script>
 </body>
 </html>
