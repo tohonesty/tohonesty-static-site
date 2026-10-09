@@ -26,7 +26,7 @@ function buildEmail(ciphertext) {
     "tohonesty@tohonesty.com",
     `From: Tohonesty Intake <tohonesty@tohonesty.com>\r\n` +
       `To: tohonesty@tohonesty.com\r\n` +
-      `Subject: Encrypted Tohonesty intake [2026-08-r2]\r\n` +
+      `Subject: Encrypted Tohonesty intake [2026-10-r1]\r\n` +
       `Content-Type: text/plain; charset=utf-8\r\n` +
       `Content-Transfer-Encoding: 7bit\r\n` +
       `Auto-Submitted: auto-generated\r\n\r\n${body}\r\n`
