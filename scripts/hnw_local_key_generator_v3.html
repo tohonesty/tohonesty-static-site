@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HNW Offline Key Pair Generator</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; max-width: 850px; margin: 0 auto; }
+        h2 { color: #38bdf8; }
+        button { background: #0284c7; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; margin-right: 10px; margin-top: 8px; }
+        button:hover:not(:disabled) { background: #0369a1; }
+        button:disabled { opacity: 0.45; cursor: not-allowed; }
+        .download-button { background: #0f766e; }
+        .download-button:hover:not(:disabled) { background: #115e59; }
+        textarea, input { width: 100%; background: #1e293b; color: #cbd5e1; border: 1px solid #334155; border-radius: 6px; padding: 12px; font-family: monospace; margin-top: 10px; box-sizing: border-box; }
+        textarea { height: 220px; resize: vertical; }
+        input { height: 44px; }
+        .box { margin-bottom: 25px; }
+        .warning { background: #3f2f0c; border-left: 4px solid #f59e0b; padding: 14px; border-radius: 4px; color: #fbbf24; margin: 20px 0; font-weight: 600; }
+        .note { color: #94a3b8; font-size: 14px; line-height: 1.5; }
+        .actions { margin-top: 10px; }
+        .status { color: #86efac; font-size: 14px; min-height: 20px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>HNW Offline Key Pair Generator</h2>
+
+    <div class="warning">MANDATORY: Run only on the permanently air-gapped machine. Never copy the private key to an online system.</div>
+
+    <p class="note">Generates an RSA-OAEP / SHA-256 3072-bit key pair for the TOHONESTY-INTAKE-V1 hybrid encryption protocol. The public output is wrapped in the exact JSON format expected by the website. The private key remains a JWK and must stay offline.</p>
+
+    <div class="box">
+        <label for="keyId"><strong>Key ID</strong> (examples: 2026-09 or 2026-08-r2)</label>
+        <input id="keyId" type="text" placeholder="2026-08-r2" autocomplete="off" spellcheck="false">
+        <p class="note">Use a unique Key ID whenever you replace a key within the same month.</p>
+    </div>
+
+    <button id="generateButton" type="button">Generate New RSA-OAEP 3072 Key Pair</button>
+
+    <div class="box" style="margin-top:30px;">
+        <h3>Public Key Package</h3>
+        <p class="note">This is the file copied to <code>site/assets/crypto/public-key.json</code> on the online build machine.</p>
+        <textarea id="pubkey" readonly spellcheck="false" placeholder="Click generate..."></textarea>
+        <div class="actions">
+            <button id="savePublicButton" class="download-button" type="button" disabled>Save Public Key File…</button>
+        </div>
+    </div>
+
+    <div class="box">
+        <h3>Private Key JWK</h3>
+        <p class="note">Keep this file exclusively on the air-gapped system or its approved offline media.</p>
+        <textarea id="privkey" readonly spellcheck="false" placeholder="Click generate..."></textarea>
+        <div class="actions">
+            <button id="savePrivateButton" class="download-button" type="button" disabled>Save Private Key File…</button>
+        </div>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <script>
+    "use strict";
+
+    (() => {
+        const generateButton = document.getElementById("generateButton");
+        const savePublicButton = document.getElementById("savePublicButton");
+        const savePrivateButton = document.getElementById("savePrivateButton");
+        const keyIdInput = document.getElementById("keyId");
+        const publicOutput = document.getElementById("pubkey");
+        const privateOutput = document.getElementById("privkey");
+        const status = document.getElementById("status");
+
+        let currentKeyId = "";
+
+        function isValidKeyId(value) {
+            return /^\d{4}-(0[1-9]|1[0-2])(?:-r[1-9]\d*)?$/.test(value);
+        }
+
+        function safeFilenamePart(value) {
+            return value.replace(/[^A-Za-z0-9._-]/g, "-");
+        }
+
+        function saveTextFile(filename, contents) {
+            const blob = new Blob([contents + "\n"], {
+                type: "application/json;charset=utf-8"
+            });
+
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.download = filename;
+            anchor.style.display = "none";
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function savePublicKey() {
+            if (!currentKeyId || !publicOutput.value) {
+                return;
+            }
+
+            saveTextFile(
+                `tohonesty-public-${safeFilenamePart(currentKeyId)}.json`,
+                publicOutput.value
+            );
+        }
+
+        function savePrivateKey() {
+            if (!currentKeyId || !privateOutput.value) {
+                return;
+            }
+
+            saveTextFile(
+                `tohonesty-private-${safeFilenamePart(currentKeyId)}.jwk.json`,
+                privateOutput.value
+            );
+        }
+
+        async function generateKeys() {
+            const keyId = keyIdInput.value.trim();
+
+            if (!isValidKeyId(keyId)) {
+                alert("Enter a valid Key ID such as 2026-09 or 2026-08-r2.");
+                return;
+            }
+
+            generateButton.disabled = true;
+            savePublicButton.disabled = true;
+            savePrivateButton.disabled = true;
+            publicOutput.value = "";
+            privateOutput.value = "";
+            status.textContent = "Generating 3072-bit RSA key pair…";
+            currentKeyId = "";
+
+            try {
+                const keyPair = await window.crypto.subtle.generateKey(
+                    {
+                        name: "RSA-OAEP",
+                        modulusLength: 3072,
+                        publicExponent: new Uint8Array([1, 0, 1]),
+                        hash: "SHA-256"
+                    },
+                    true,
+                    ["encrypt", "decrypt"]
+                );
+
+                const pubJwk = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+                const privJwk = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+
+                const publicPackage = {
+                    kid: keyId,
+                    jwk: {
+                        alg: "RSA-OAEP-256",
+                        e: pubJwk.e,
+                        ext: true,
+                        key_ops: ["encrypt"],
+                        kty: "RSA",
+                        n: pubJwk.n
+                    }
+                };
+
+                privJwk.alg = "RSA-OAEP-256";
+                privJwk.ext = true;
+                privJwk.key_ops = ["decrypt"];
+
+                publicOutput.value = JSON.stringify(publicPackage, null, 2);
+                privateOutput.value = JSON.stringify(privJwk, null, 2);
+                currentKeyId = keyId;
+                savePublicButton.disabled = false;
+                savePrivateButton.disabled = false;
+                status.textContent = `Key pair generated successfully. Key ID: ${keyId}`;
+            } catch (_) {
+                alert("Key generation failed.");
+                publicOutput.value = "";
+                privateOutput.value = "";
+                status.textContent = "Key generation failed.";
+            } finally {
+                generateButton.disabled = false;
+            }
+        }
+
+        generateButton.addEventListener("click", generateKeys);
+        savePublicButton.addEventListener("click", savePublicKey);
+        savePrivateButton.addEventListener("click", savePrivateKey);
+    })();
+    </script>
+</body>
+</html>

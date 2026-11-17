@@ -72,12 +72,12 @@ test("browser handler sends only the envelope to the API", () => {
   assert.doesNotMatch(script, /body: JSON\.stringify\(payload\)/);
   assert.match(script, /RSA-OAEP/);
   assert.match(script, /AES-GCM/);
-  assert.match(script, /2026-10-r1/);
+  assert.match(script, /2026-11-r1/);
 });
 
 test("public key is the expected RSA-3072 encryption key", () => {
   const key = JSON.parse(read("assets/crypto/public-key.json"));
-  assert.equal(key.kid, "2026-10-r1");
+  assert.equal(key.kid, "2026-11-r1");
   assert.equal(key.jwk.kty, "RSA");
   assert.equal(key.jwk.e, "AQAB");
   assert.equal(key.jwk.n.length, 512);
@@ -87,7 +87,7 @@ test("public key is the expected RSA-3072 encryption key", () => {
 
 test("Worker envelope validation accepts only the exact protocol shape", () => {
   const bytes = (size) => Buffer.alloc(size, 1).toString("base64url");
-  const valid = { v: 1, alg: "RSA-OAEP-256+A256GCM", kid: "2026-10-r1", ek: bytes(384), iv: bytes(12), ct: bytes(32) };
+  const valid = { v: 1, alg: "RSA-OAEP-256+A256GCM", kid: "2026-11-r1", ek: bytes(384), iv: bytes(12), ct: bytes(32) };
   assert.equal(validateEnvelope(valid), true);
   assert.equal(validateEnvelope({ ...valid, name: "plaintext" }), false);
   assert.equal(validateEnvelope({ ...valid, kid: "2026-09" }), false);

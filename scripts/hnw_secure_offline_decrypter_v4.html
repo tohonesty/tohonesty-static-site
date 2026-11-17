@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HNW Secure Offline Intake Decrypter</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0b132b; color: #f4f5f6; padding: 40px; margin: 0; }
+    .container { max-width: 900px; margin: 0 auto; background: #1c2541; padding: 40px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    h1 { color: #5bc0be; margin-top: 0; font-size: 28px; border-bottom: 2px solid #3a506b; padding-bottom: 15px; }
+    .warning { background-color: rgba(255, 183, 3, 0.1); border-left: 4px solid #ffb703; padding: 15px; border-radius: 4px; color: #ffb703; font-weight: bold; margin-bottom: 20px; font-size: 14px; }
+    .note { color: #cbd5e1; font-size: 14px; line-height: 1.5; }
+    label { display: block; font-weight: 600; margin: 25px 0 8px 0; color: #cbd5e1; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+    textarea { box-sizing: border-box; width: 100%; height: 170px; background-color: #0b132b; border: 1px solid #3a506b; border-radius: 6px; color: #f4f5f6; padding: 15px; font-family: "SFMono-Regular", Consolas, Menlo, monospace; font-size: 13px; resize: vertical; }
+    textarea:focus { border-color: #5bc0be; outline: none; }
+    button { width: 100%; background-color: #5bc0be; color: #0b132b; border: none; padding: 16px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 30px; }
+    button:hover:not(:disabled) { background-color: #6fffe9; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .file-row { display: flex; gap: 12px; align-items: center; margin: 10px 0 12px 0; flex-wrap: wrap; }
+    .file-button { width: auto; margin-top: 0; padding: 10px 16px; font-size: 14px; }
+    .file-name { color: #94a3b8; font-size: 13px; overflow-wrap: anywhere; }
+    .file-input { display: none; }
+    .status-box, .output-box { background-color: #0b132b; border: 1px solid #3a506b; border-radius: 6px; padding: 18px; margin-top: 22px; }
+    .status-box { color: #cbd5e1; font-family: "SFMono-Regular", Consolas, Menlo, monospace; font-size: 13px; white-space: pre-wrap; }
+    .status-ok { border-left: 4px solid #22c55e; }
+    .status-error { border-left: 4px solid #ef4444; color: #fecaca; }
+    .output-box { display: none; }
+    .output-box h3 { color: #6fffe9; margin-top: 0; font-size: 18px; border-bottom: 1px solid #3a506b; padding-bottom: 10px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: rgba(58, 80, 107, 0.3); padding: 20px; border-radius: 4px; border-left: 4px solid #5bc0be; overflow-x: auto; font-family: "SFMono-Regular", Consolas, Menlo, monospace; font-size: 14px; line-height: 1.5; color: #6fffe9; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>HNW Secure Offline Intake Decrypter</h1>
+  <div class="warning">MANDATORY SAFETY RULE: Keep this device completely air-gapped before loading private cryptographic material.</div>
+  <p class="note">Protocol: TOHONESTY-INTAKE-V1. RSA-OAEP with SHA-256 decrypts the per-message AES key; AES-256-GCM decrypts the intake payload. RSA key size may be 2048 or 3072 bits.</p>
+
+  <label for="privateKey">1. Private Key (JWK JSON)</label>
+  <div class="file-row">
+    <button id="choosePrivateKey" class="file-button" type="button">Choose Private Key File…</button>
+    <span id="privateKeyFileName" class="file-name">No file selected</span>
+    <input id="privateKeyFile" class="file-input" type="file" accept=".json,.jwk,.txt,application/json,text/plain">
+  </div>
+  <textarea id="privateKey" spellcheck="false" autocomplete="off" placeholder='{ "kty": "RSA", "alg": "RSA-OAEP-256", ... }'></textarea>
+
+  <label for="cipherText">2. Encrypted Ciphertext</label>
+  <div class="file-row">
+    <button id="chooseCipherText" class="file-button" type="button">Choose Ciphertext File…</button>
+    <span id="cipherTextFileName" class="file-name">No file selected</span>
+    <input id="cipherTextFile" class="file-input" type="file" accept=".txt,.text,text/plain">
+  </div>
+  <textarea id="cipherText" spellcheck="false" autocomplete="off" placeholder="Paste the ciphertext string, or the complete BEGIN/END TOHONESTY CIPHERTEXT block."></textarea>
+
+  <button id="decryptButton" type="button">Decrypt Intake Payload</button>
+
+  <div id="statusBox" class="status-box">Ready.</div>
+
+  <div class="output-box" id="outputContainer">
+    <h3>Decrypted Intake</h3>
+    <pre id="plainOutput"></pre>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+(() => {
+  const PROTOCOL = "TOHONESTY-INTAKE-V1";
+  const EXPECTED_VERSION = 1;
+  const EXPECTED_ALGORITHM = "RSA-OAEP-256+A256GCM";
+  const KEY_ID_RE = /^\d{4}-(0[1-9]|1[0-2])(?:-r[1-9]\d*)?$/;
+  const BASE64URL_RE = /^[A-Za-z0-9_-]+$/;
+
+  const privateKeyInput = document.getElementById("privateKey");
+  const cipherTextInput = document.getElementById("cipherText");
+  const privateKeyFile = document.getElementById("privateKeyFile");
+  const cipherTextFile = document.getElementById("cipherTextFile");
+  const choosePrivateKey = document.getElementById("choosePrivateKey");
+  const chooseCipherText = document.getElementById("chooseCipherText");
+  const privateKeyFileName = document.getElementById("privateKeyFileName");
+  const cipherTextFileName = document.getElementById("cipherTextFileName");
+  const decryptButton = document.getElementById("decryptButton");
+  const statusBox = document.getElementById("statusBox");
+  const outputContainer = document.getElementById("outputContainer");
+  const plainOutput = document.getElementById("plainOutput");
+
+  function setStatus(message, ok = null) {
+    statusBox.textContent = message;
+    statusBox.classList.remove("status-ok", "status-error");
+    if (ok === true) statusBox.classList.add("status-ok");
+    if (ok === false) statusBox.classList.add("status-error");
+  }
+
+  async function loadTextFile(file, target, fileNameTarget, label) {
+    if (!file) return;
+    try {
+      const contents = await file.text();
+      if (!contents.trim()) throw new Error("Selected file is empty.");
+      target.value = contents;
+      fileNameTarget.textContent = file.name;
+      setStatus(`${label} file loaded: ${file.name}`);
+    } catch (error) {
+      target.value = "";
+      fileNameTarget.textContent = "No file selected";
+      setStatus(`Could not read ${label} file: ${error.message}`, false);
+    }
+  }
+
+  function cleanCiphertext(value) {
+    return value
+      .replace(/-----BEGIN TOHONESTY CIPHERTEXT-----/g, "")
+      .replace(/-----END TOHONESTY CIPHERTEXT-----/g, "")
+      .replace(/\s+/g, "")
+      .trim();
+  }
+
+  function base64UrlToBytes(value) {
+    if (typeof value !== "string" || !value || !BASE64URL_RE.test(value)) {
+      throw new Error("Invalid Base64URL data.");
+    }
+
+    let base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+    const remainder = base64.length % 4;
+    if (remainder === 2) base64 += "==";
+    else if (remainder === 3) base64 += "=";
+    else if (remainder !== 0) throw new Error("Invalid Base64URL length.");
+
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  }
+
+  function decodeEnvelope(ciphertext) {
+    const outerBytes = base64UrlToBytes(ciphertext);
+    const json = new TextDecoder("utf-8", { fatal: true }).decode(outerBytes);
+    const envelope = JSON.parse(json);
+
+    if (!envelope || typeof envelope !== "object" || Array.isArray(envelope)) {
+      throw new Error("Outer encryption envelope is not an object.");
+    }
+
+    const actualKeys = Object.keys(envelope).sort();
+    const expectedKeys = ["alg", "ct", "ek", "iv", "kid", "v"].sort();
+    if (actualKeys.length !== expectedKeys.length || !actualKeys.every((k, i) => k === expectedKeys[i])) {
+      throw new Error(`Unexpected envelope fields: ${actualKeys.join(", ")}`);
+    }
+
+    if (envelope.v !== EXPECTED_VERSION) throw new Error(`Unsupported protocol version: ${envelope.v}`);
+    if (envelope.alg !== EXPECTED_ALGORITHM) throw new Error(`Unexpected algorithm: ${envelope.alg}`);
+    if (typeof envelope.kid !== "string" || !KEY_ID_RE.test(envelope.kid)) {
+      throw new Error(`Invalid Key ID: ${String(envelope.kid)}`);
+    }
+
+    return envelope;
+  }
+
+  function validatePrivateJwk(jwk) {
+    if (!jwk || typeof jwk !== "object" || Array.isArray(jwk)) throw new Error("Private-key file is not a JWK object.");
+    if (jwk.jwk) throw new Error("A wrapped public-key package was selected. Choose the PRIVATE JWK file instead.");
+    if (jwk.kty !== "RSA") throw new Error("Private key is not RSA.");
+    if (!jwk.d) throw new Error("Selected JWK does not contain RSA private-key material (missing d).");
+    if (jwk.alg && jwk.alg !== "RSA-OAEP-256") throw new Error(`Private JWK alg is ${jwk.alg}, expected RSA-OAEP-256.`);
+  }
+
+  async function decryptPayload() {
+    outputContainer.style.display = "none";
+    plainOutput.textContent = "";
+
+    const privKeyRaw = privateKeyInput.value.trim();
+    const cipherTextRaw = cleanCiphertext(cipherTextInput.value);
+
+    if (!privKeyRaw || !cipherTextRaw) {
+      setStatus("Private key and ciphertext are both required.", false);
+      return;
+    }
+
+    decryptButton.disabled = true;
+
+    try {
+      setStatus("Stage 1/7: Parsing private key…");
+      const jwk = JSON.parse(privKeyRaw);
+      validatePrivateJwk(jwk);
+
+      setStatus("Stage 2/7: Decoding encryption envelope…");
+      const envelope = decodeEnvelope(cipherTextRaw);
+
+      setStatus(`Stage 3/7: Importing RSA private key for Key ID ${envelope.kid}…`);
+      const privateKey = await crypto.subtle.importKey(
+        "jwk",
+        jwk,
+        { name: "RSA-OAEP", hash: "SHA-256" },
+        false,
+        ["decrypt"]
+      );
+
+      const modulusLength = privateKey.algorithm.modulusLength;
+      if (modulusLength !== 2048 && modulusLength !== 3072) {
+        throw new Error(`Unsupported RSA modulus length: ${modulusLength} bits.`);
+      }
+
+      const encryptedAesKey = base64UrlToBytes(envelope.ek);
+      const iv = base64UrlToBytes(envelope.iv);
+      const encryptedPayload = base64UrlToBytes(envelope.ct);
+
+      if (iv.byteLength !== 12) throw new Error(`Invalid AES-GCM IV length: ${iv.byteLength} bytes.`);
+
+      const expectedRsaCipherBytes = modulusLength / 8;
+      if (encryptedAesKey.byteLength !== expectedRsaCipherBytes) {
+        throw new Error(`Encrypted AES-key length is ${encryptedAesKey.byteLength} bytes; expected ${expectedRsaCipherBytes} for RSA-${modulusLength}.`);
+      }
+
+      setStatus(`Stage 4/7: RSA-OAEP/SHA-256 decrypt of AES key (${modulusLength}-bit RSA)…`);
+      const rawAesKey = await crypto.subtle.decrypt(
+        { name: "RSA-OAEP" },
+        privateKey,
+        encryptedAesKey
+      );
+
+      if (rawAesKey.byteLength !== 32) {
+        throw new Error(`Decrypted AES key length is ${rawAesKey.byteLength} bytes; expected 32.`);
+      }
+
+      setStatus("Stage 5/7: Importing AES-256-GCM key…");
+      const aesKey = await crypto.subtle.importKey(
+        "raw",
+        rawAesKey,
+        { name: "AES-GCM" },
+        false,
+        ["decrypt"]
+      );
+
+      const aad = new TextEncoder().encode(`${PROTOCOL}|${envelope.kid}`);
+
+      setStatus("Stage 6/7: AES-256-GCM authenticated decryption…");
+      const decryptedBuffer = await crypto.subtle.decrypt(
+        {
+          name: "AES-GCM",
+          iv,
+          additionalData: aad,
+          tagLength: 128
+        },
+        aesKey,
+        encryptedPayload
+      );
+      aad.fill(0);
+
+      const plainText = new TextDecoder("utf-8", { fatal: true }).decode(decryptedBuffer);
+      const expectedPrefix = `${PROTOCOL}\nKEY-ID: ${envelope.kid}\n`;
+      if (!plainText.startsWith(expectedPrefix)) {
+        throw new Error("Decrypted protocol marker or Key ID does not match the envelope.");
+      }
+
+      setStatus(`Stage 7/7: Decryption successful. Key ID ${envelope.kid}; RSA-${modulusLength}; RSA-OAEP/SHA-256 + AES-256-GCM.`, true);
+      plainOutput.textContent = plainText;
+      outputContainer.style.display = "block";
+      outputContainer.scrollIntoView({ behavior: "smooth" });
+
+    } catch (error) {
+      // Deliberately show the exact local error to make offline troubleshooting possible.
+      // Nothing is transmitted anywhere.
+      setStatus(`DECRYPTION FAILED\n${error.name || "Error"}: ${error.message || String(error)}`, false);
+      outputContainer.style.display = "none";
+      plainOutput.textContent = "";
+    } finally {
+      decryptButton.disabled = false;
+    }
+  }
+
+  choosePrivateKey.addEventListener("click", () => privateKeyFile.click());
+  chooseCipherText.addEventListener("click", () => cipherTextFile.click());
+
+  privateKeyFile.addEventListener("change", () => {
+    loadTextFile(privateKeyFile.files?.[0], privateKeyInput, privateKeyFileName, "Private-key");
+  });
+
+  cipherTextFile.addEventListener("change", () => {
+    loadTextFile(cipherTextFile.files?.[0], cipherTextInput, cipherTextFileName, "Ciphertext");
+  });
+
+  decryptButton.addEventListener("click", decryptPayload);
+})();
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 {
-  "kid": "2026-10-r1",
+  "kid": "2026-11-r1",
   "jwk": {
     "alg": "RSA-OAEP-256",
     "e": "AQAB",
@@ -8,6 +8,6 @@
       "encrypt"
     ],
     "kty": "RSA",
-    "n": "sNxNbLOKjyr2xb4C9HZ32p6VxAYreZvZzh_muas_NT9TfXbCjF-h2KffE1rA9BTp_9BgEaB4rVspDF843IAitwTeZgA0ggcWqBIlLpzUArJ4n28LDedSaQTGedzD7MV3PA57QmtONAyKo6cmmdpzivFoo-fBwJYzXTEjn7azCeEo0kBe5oL2zXrFclY__CGr1EYjh2v0phL9mMVTDnT5eXtVx9iOMKibusyAa3uXzUiRS9vHNl8HQ8q3Qrz018BXg5NGl1SjN9OnvrUh1gOOjOdjrSj4Xx1gXHZDISekKTtovjiJ2qYPxZqzuaqVUThW21iU-KRVLG00TX2QwcjFKYw5deg4OKuN9Ie943rbHMOoOX-K5vtiKsBMeGzOBnUcdoMhOcLJHF25PR0_VwYH9k7k-H0K-sUVC4_Qb6U8A-BFKUDRdMQZJWW6Jeu4BI9-gOZXKgvURGRRmkltrZecQrVGFuBGNWvMLtDTQDIuYdD8pnnlkwPFbbRy8MOhExln"
+    "n": "vnkHF_CGcfpjTU1X2JhbxnfS_M9wXUMCdHBUrRh6lV6okEz7PbTR4VVwCfWzUDh8nPA5zTh1-snnWrEWy0NcxWhCiqcFiTchSZNPzQsGA-rroZXL-NJcl8j87uq2yPGZ56Bwyr0HYyVn6NTu_hRnNqljemBu5qL21gM_AsOxULNA7PC0wiofxfWwFHfj2DQK3rK2O5HhdFy2xx4q9DtRd5iGGj6W_1Cqbv5cyhS5Z5ZY-S1pV6-USmtWV-3ou2RpXOD4ZpCVHTqv351kEBUu3DENm1c2rduDgmQi9v3Exri77xVbfw-AvOwcw5jDPj1Em0Lld74-eNNbH7ceZjduxUlUr3MhzMlnmkATFGzRy6sIsZ2_s5_Vfvg7C-35ji4WLrha6q4NCd8iM5mmtf7lH858IvBpssuOkIT506HxaoVc6sT-fzBeNm0vatKp3AOSEZXW80AgwIZ2DMk8tANfjvl-kFOhhvfmp7Otlol7_Xgh1sM5wyPA9rsbhyLHY8Rx"
   }
 }

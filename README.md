@@ -8,6 +8,7 @@ A clean, dependency-light Cloudflare Workers Static Assets site. It does not con
 - `src/worker.js` — `/api/contact` ciphertext validator and Cloudflare Email sender
 - `tests/` — content, security-boundary and Worker validation checks
 - `wrangler.jsonc` — local, staging and production configuration
+- `scripts/rotate-key.mjs` — key-rotation helper (optional)
 
 ## Safe release sequence
 
@@ -21,10 +22,17 @@ A clean, dependency-light Cloudflare Workers Static Assets site. It does not con
 
 The production routes are included for review but production deployment must not be run before staging acceptance. The `CONTACT_EMAIL` Email Routing binding is restricted to `tohonesty@tohonesty.com`.
 
-## Monthly public-key rotation
+## Key rotation
 
-Replace `public/assets/crypto/public-key.json`, update `EXPECTED_KEY_ID` in `public/assets/js/contact.js` and `src/worker.js`, then run the full release sequence. Never place a private key in this repository.
+Key rotations are air-gapped. Generate the new RSA-3072 key pair offline, then use the helper script (or update the files manually).
 
-## Deliberately deferred hardening
+### Using the script (recommended)
 
-CSP and advanced headers are not included yet, per the staged hardening plan. Add them only after the site and encrypted contact workflow are frozen, one tested change at a time.
+Place the new public-key JSON somewhere outside the repo (or in a temporary location), then from the repo root:
+
+```bash
+# Preview changes (no files modified)
+node scripts/rotate-key.mjs --dry-run 2026-11-r1 /path/to/new-public-key.json
+
+# Perform the rotation (creates a timestamped backup first)
+node scripts/rotate-key.mjs 2026-11-r1 /path/to/new-public-key.json

@@ -2,7 +2,7 @@
 
 (() => {
   const PROTOCOL = "TOHONESTY-INTAKE-V1";
-  const EXPECTED_KEY_ID = "2026-10-r1";
+  const EXPECTED_KEY_ID = "2026-11-r1";
   const EXPECTED_ALGORITHM = "RSA-OAEP-256+A256GCM";
   const form = document.getElementById("secure-contact");
   if (!form) return;

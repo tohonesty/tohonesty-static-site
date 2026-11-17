@@ -15,7 +15,7 @@ export function validateEnvelope(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const keys = Object.keys(value).sort();
   if (keys.length !== ENVELOPE_KEYS.length || !keys.every((key, i) => key === [...ENVELOPE_KEYS].sort()[i])) return false;
-  if (value.v !== 1 || value.alg !== "RSA-OAEP-256+A256GCM" || value.kid !== "2026-10-r1") return false;
+  if (value.v !== 1 || value.alg !== "RSA-OAEP-256+A256GCM" || value.kid !== "2026-11-r1") return false;
   try {
     return decodeBase64Url(value.iv).byteLength === 12 &&
       decodeBase64Url(value.ek).byteLength === 384 &&
