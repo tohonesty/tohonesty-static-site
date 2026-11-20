@@ -39,7 +39,7 @@ test("legal wording and dates are preserved", () => {
     /The Old School Rooms, The Street, North Stoke, Wallingford, United Kingdom, OX10 6BL/
   );
 
-  assert.match(client, /Last updated:<\/strong> 15 August 2026/);
+  assert.match(client, /Last updated:<\/strong> 20 November 2026/);
   assert.match(
     client,
     /Never send Tohonesty private keys, seed phrases, passwords, PINs, passphrases, recovery codes or direct access to a wallet, account, device or asset\./
